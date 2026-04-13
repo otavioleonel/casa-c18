@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
   const { id } = req.query;
   const dados = await lerDados();
-  dados.saidas = dados.saidas.filter(s => s.id !== id);
+  dados.entradas = dados.entradas.filter(e => e.id !== id);
   await salvarDados(dados);
 
   return res.status(200).json({ ok: true });
