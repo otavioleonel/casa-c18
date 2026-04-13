@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<title>Casa C18</title>
+<style>
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f4; --bg3: #e8e8e6;
+    --text: #1a1a1a; --text2: #6b6b6b; --text3: #9b9b9b;
+    --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+    --green: #3b6d11; --green-bg: #eaf3de; --green-text: #3b6d11;
+    --red: #a32d2d; --red-bg: #fcebeb; --red-text: #a32d2d;
+    --amber: #854f0b; --amber-bg: #faeeda; --amber-text: #854f0b;
+    --blue: #185fa5; --blue-bg: #e6f1fb; --blue-text: #185fa5;
+    --radius: 10px; --radius-lg: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1e; --bg2: #2c2c2e; --bg3: #3a3a3c;
+      --text: #f2f2f7; --text2: #aeaeb2; --text3: #636366;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+      --green-bg: #173404; --green-text: #C0DD97;
+      --red-bg: #501313; --red-text: #F09595;
+      --amber-bg: #412402; --amber-text: #FAC775;
+      --blue-bg: #042C53; --blue-text: #85B7EB;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
+  .app { max-width: 430px; margin: 0 auto; background: var(--bg3); min-height: 100vh; }
+  .screen { display: none; min-height: 100vh; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* topbar */
+  .topbar { background: var(--bg); padding: 14px 16px 12px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .topbar-left h2 { font-size: 16px; font-weight: 600; color: var(--text); }
+  .topbar-left p { font-size: 12px; color: var(--text2); margin-top: 1px; }
+  .topbar-action { font-size: 14px; color: var(--blue); background: none; border: none; cursor: pointer; font-weight: 500; padding: 4px; }
+
+  /* login */
+  .login-body { flex: 1; padding: 2rem 1.5rem; display: flex; flex-direction: column; justify-content: center; }
+  .login-hero { text-align: center; margin-bottom: 2.5rem; }
+  .login-hero .emoji { font-size: 48px; display: block; margin-bottom: 12px; }
+  .login-hero h1 { font-size: 26px; font-weight: 700; color: var(--text); }
+  .login-hero p { font-size: 14px; color: var(--text2); margin-top: 6px; }
+  .socio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .socio-card { background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 20px 12px; text-align: center; cursor: pointer; transition: transform 0.1s, background 0.15s; }
+  .socio-card:active { transform: scale(0.97); background: var(--bg2); }
+  .s-av { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; margin: 0 auto 10px; }
+  .av-ov { background: #E6F1FB; color: #0C447C; }
+  .av-lc { background: #E1F5EE; color: #085041; }
+  .av-af { background: #FAEEDA; color: #633806; }
+  .av-fm { background: #FBEAF0; color: #72243E; }
+  .s-nome { font-size: 15px; font-weight: 600; color: var(--text); }
+  .s-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+  /* content area */
+  .content { flex: 1; overflow-y: auto; padding: 16px; }
+
+  /* cards */
+  .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .metric { background: var(--bg); border-radius: var(--radius); padding: 14px; }
+  .metric-label { font-size: 11px; color: var(--text2); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
+  .metric-val { font-size: 18px; font-weight: 700; }
+  .val-g { color: var(--green-text); }
+  .val-r { color: var(--red-text); }
+  .val-a { color: var(--amber-text); }
+  .val-n { color: var(--text); }
+
+  /* section */
+  .sec-head { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; margin-top: 18px; }
+
+  /* action buttons */
+  .act-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 6px; }
+  .act-btn { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px 12px; text-align: center; cursor: pointer; transition: background 0.15s; }
+  .act-btn:active { background: var(--bg2); }
+  .act-icon { font-size: 22px; margin-bottom: 6px; }
+  .act-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .act-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  /* list items */
+  .item-list { display: flex; flex-direction: column; gap: 6px; }
+  .item { background: var(--bg); border-radius: var(--radius); padding: 12px; display: flex; align-items: center; gap: 10px; }
+  .item-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-e { background: #639922; }
+  .dot-s { background: #E24B4A; }
+  .dot-a { background: #BA7517; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-desc { font-size: 14px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-meta { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .item-val { font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .item-del { background: none; border: none; color: var(--red-text); cursor: pointer; font-size: 14px; padding: 4px; opacity: 0.5; }
+  .item-del:active { opacity: 1; }
+
+  /* form */
+  .form-body { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .f-label { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.04em; }
+  .f-input { width: 100%; padding: 13px 14px; font-size: 15px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); font-family: inherit; -webkit-appearance: none; }
+  .f-input:focus { outline: none; border-color: var(--blue); }
+  .tipo-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tipo-opt { padding: 13px; border: 0.5px solid var(--border2); border-radius: var(--radius); text-align: center; cursor: pointer; font-size: 14px; font-weight: 600; background: var(--bg); color: var(--text2); transition: all 0.15s; }
+  .tipo-opt.on-s { background: var(--red-bg); color: var(--red-text); border-color: transparent; }
+  .tipo-opt.on-e { background: var(--green-bg); color: var(--green-text); border-color: transparent; }
+  .save-btn { width: 100%; padding: 16px; background: var(--blue); color: white; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 4px; }
+  .save-btn:active { opacity: 0.85; }
+  .save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* resumo */
+  .res-box { background: var(--bg); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 12px; line-height: 1.8; font-size: 14px; color: var(--text); }
+  .res-box strong { font-weight: 700; }
+  .res-socio { background: var(--bg); border-radius: var(--radius); padding: 12px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .res-info { flex: 1; }
+  .res-nome { font-size: 14px; font-weight: 600; color: var(--text); }
+  .res-detalhe { font-size: 12px; color: var(--text2); }
+  .res-val { font-size: 15px; font-weight: 700; color: var(--green-text); }
+
+  /* toast */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 20px; border-radius: 24px; font-size: 14px; font-weight: 500; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 100; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+
+  /* empty */
+  .empty { text-align: center; padding: 2rem 1rem; color: var(--text2); font-size: 14px; }
+
+  /* loading */
+  #loading { position: fixed; inset: 0; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text2); z-index: 999; }
+
+  .divider { height: 0.5px; background: var(--border); margin: 14px 0; }
+</style>
+</head>
+<body>
+
+<div id="loading">Carregando...</div>
+<div class="app">
+
+  <!-- LOGIN -->
+  <div id="s-login" class="screen">
+    <div class="login-body">
+      <div class="login-hero">
+        <span class="emoji">🏗️</span>
+        <h1>Casa C18</h1>
+        <p>Quem está registrando?</p>
+      </div>
+      <div class="socio-grid" id="socio-grid"></div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="s-home" class="screen">
+    <div class="topbar">
+      <div class="topbar-left"><h2>Casa C18</h2><p id="home-sub">Bem-vindo!</p></div>
+      <button class="topbar-action" onclick="logout()">Trocar</button>
+    </div>
+    <div class="content">
+      <div class="cards-grid">
+        <div class="metric"><div class="metric-label">Entradas</div><div class="metric-val val-g" id="c-ent">R$ 0</div></div>
+        <div class="metric"><div class="metric-label">Saídas pagas</div><div class="metric-val val-r" id="c-sai">R$ 0</div></div>
+        <div class="metric"><div class="metric-label">A vencer</div><div class="metric-val val-a" id="c-av">R$ 0</div></div>
+        <div class="metric"><div class="metric-label">Saldo</div><div class="metric-val" id="c-sal">R$ 0</div></div>
+      </div>
+      <div class="act-grid">
+        <div class="act-btn" onclick="goTo('s-form')"><div class="act-icon">➕</div><div class="act-title">Lançamento</div><div class="act-sub">Nota, PIX, pagamento</div></div>
+        <div class="act-btn" onclick="goTo('s-resumo')"><div class="act-icon">📊</div><div class="act-title">Resumo</div><div class="act-sub">Saldo por sócio</div></div>
+        <div class="act-btn" onclick="goTo('s-historico')"><div class="act-icon">📋</div><div class="act-title">Histórico</div><div class="act-sub">Todos os lançamentos</div></div>
+        <div class="act-btn" onclick="exportCSV()"><div class="act-icon">⬇️</div><div class="act-title">Exportar</div><div class="act-sub">Baixar planilha</div></div>
+      </div>
+      <div class="sec-head">Últimos lançamentos</div>
+      <div class="item-list" id="ultimos"></div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div id="s-form" class="screen">
+    <div class="topbar">
+      <button class="topbar-action" onclick="goTo('s-home')">← Voltar</button>
+      <div class="topbar-left" style="text-align:center"><h2>Novo lançamento</h2></div>
+      <div style="width:60px"></div>
+    </div>
+    <div class="form-body">
+      <div>
+        <label class="f-label">Tipo</label>
+        <div class="tipo-row">
+          <div class="tipo-opt on-s" id="opt-s" onclick="setTipo('s')">▼ Saída (paguei)</div>
+          <div class="tipo-opt" id="opt-e" onclick="setTipo('e')">▲ Entrada (recebi)</div>
+        </div>
+      </div>
+      <div>
+        <label class="f-label">Descrição</label>
+        <input class="f-input" id="f-desc" placeholder="Ex: 4a parcela Manoel, Ferro, PIX..." />
+      </div>
+      <div>
+        <label class="f-label">Valor (R$)</label>
+        <input class="f-input" id="f-valor" type="number" step="0.01" min="0.01" placeholder="0,00" inputmode="decimal" />
+      </div>
+      <div id="grp-cat">
+        <label class="f-label">Categoria</label>
+        <select class="f-input" id="f-cat">
+          <option>Mão de Obra</option><option>Material</option><option>Concreto</option>
+          <option>Ferro</option><option>Tijolo</option><option>Areia</option>
+          <option>Elétrica</option><option>Engenharia</option><option>Admin</option><option>Outro</option>
+        </select>
+      </div>
+      <div id="grp-pagto">
+        <label class="f-label">Status do pagamento</label>
+        <select class="f-input" id="f-pagto">
+          <option value="Pagto">Pago agora</option>
+          <option value="A Vencer">A vencer (data de vencimento)</option>
+        </select>
+      </div>
+      <div id="grp-socio" style="display:none">
+        <label class="f-label">Sócio que aportou</label>
+        <select class="f-input" id="f-socio">
+          <option value="O&V">Otávio</option>
+          <option value="L&C">Luan</option>
+          <option value="A&F">Antonio</option>
+          <option value="F&M">Francisco</option>
+        </select>
+      </div>
+      <div>
+        <label class="f-label">Data</label>
+        <input class="f-input" id="f-data" type="date" />
+      </div>
+      <button class="save-btn" id="save-btn" onclick="salvar()">Salvar lançamento</button>
+    </div>
+  </div>
+
+  <!-- HISTÓRICO -->
+  <div id="s-historico" class="screen">
+    <div class="topbar">
+      <button class="topbar-action" onclick="goTo('s-home')">← Voltar</button>
+      <div class="topbar-left" style="text-align:center"><h2>Histórico</h2></div>
+      <div style="width:60px"></div>
+    </div>
+    <div class="content">
+      <div class="item-list" id="hist-list"></div>
+    </div>
+  </div>
+
+  <!-- RESUMO -->
+  <div id="s-resumo" class="screen">
+    <div class="topbar">
+      <button class="topbar-action" onclick="goTo('s-home')">← Voltar</button>
+      <div class="topbar-left" style="text-align:center"><h2>Resumo</h2></div>
+      <div style="width:60px"></div>
+    </div>
+    <div class="content" id="resumo-content"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api';
+const SOCIOS = [
+  {cod:'O&V',nome:'Otávio',cls:'av-ov',ini:'OV'},
+  {cod:'L&C',nome:'Luan',cls:'av-lc',ini:'LC'},
+  {cod:'A&F',nome:'Antonio',cls:'av-af',ini:'AF'},
+  {cod:'F&M',nome:'Francisco',cls:'av-fm',ini:'FM'}
+];
+const NOMES = {'O&V':'Otávio','L&C':'Luan','A&F':'Antonio','F&M':'Francisco'};
+const fmt = v => Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const fmtDate = d => d ? d.split('-').reverse().join('/') : '';
+
+let socioAtual = null;
+let tipoForm = 's';
+let dados = {saidas:[], entradas:[]};
+
+async function init(){
+  try {
+    const r = await fetch(`${API}/dados`);
+    dados = await r.json();
+  } catch(e){ dados = {saidas:[], entradas:[]}; }
+  document.getElementById('loading').style.display = 'none';
+  renderLogin();
+  goTo('s-login');
+  document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
+}
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='s-home') renderHome();
+  if(id==='s-historico') renderHistorico();
+  if(id==='s-resumo') renderResumo();
+}
+
+function logout(){ socioAtual = null; renderLogin(); goTo('s-login'); }
+
+function renderLogin(){
+  document.getElementById('socio-grid').innerHTML = SOCIOS.map(s => {
+    const tot = dados.entradas.filter(e=>e.socio===s.cod).reduce((a,e)=>a+Number(e.valor),0);
+    return `<div class="socio-card" onclick="login('${s.cod}')">
+      <div class="s-av ${s.cls}">${s.ini}</div>
+      <div class="s-nome">${s.nome}</div>
+      <div class="s-sub">${fmt(tot)} aportado</div>
+    </div>`;
+  }).join('');
+}
+
+function login(cod){
+  socioAtual = cod;
+  document.getElementById('home-sub').textContent = `Olá, ${NOMES[cod]}! 👋`;
+  document.getElementById('f-socio').value = cod;
+  goTo('s-home');
+}
+
+function calcTotais(){
+  const ent = dados.entradas.reduce((a,e)=>a+Number(e.valor),0);
+  const saiPago = dados.saidas.filter(s=>s.pagto==='Pagto').reduce((a,s)=>a+Number(s.valor),0);
+  const av = dados.saidas.filter(s=>s.pagto==='A Vencer').reduce((a,s)=>a+Number(s.valor),0);
+  return {ent, saiPago, av, saldo: ent-saiPago};
+}
+
+function renderHome(){
+  renderLogin();
+  const {ent,saiPago,av,saldo} = calcTotais();
+  document.getElementById('c-ent').textContent = fmt(ent);
+  document.getElementById('c-sai').textContent = fmt(saiPago);
+  document.getElementById('c-av').textContent = fmt(av);
+  const se = document.getElementById('c-sal');
+  se.textContent = fmt(saldo);
+  se.className = 'metric-val ' + (saldo >= 0 ? 'val-g' : 'val-r');
+  const all = [
+    ...dados.saidas.map(s=>({tipo:s.pagto==='A Vencer'?'a':'s',desc:s.desc,sub:s.cat,data:s.data,valor:s.valor,id:s.id,origem:'saida'})),
+    ...dados.entradas.map(e=>({tipo:'e',desc:`PIX — ${NOMES[e.socio]||e.socio}`,sub:'Entrada',data:e.data,valor:e.valor,id:e.id,origem:'entrada'}))
+  ].sort((a,b)=>b.data.localeCompare(a.data)).slice(0,6);
+  const ul = document.getElementById('ultimos');
+  ul.innerHTML = all.length ? all.map(itemHTML).join('') : '<div class="empty">Nenhum lançamento ainda.</div>';
+}
+
+function itemHTML(i, showDel=false){
+  const cls = {e:'val-g e',s:'val-r s',a:'val-a a'}[i.tipo];
+  const dotCls = {e:'dot-e',s:'dot-s',a:'dot-a'}[i.tipo];
+  const sinal = i.tipo==='e' ? '+' : '−';
+  const del = showDel ? `<button class="item-del" onclick="deletar('${i.origem}','${i.id}')">✕</button>` : '';
+  return `<div class="item">
+    <div class="item-dot ${dotCls}"></div>
+    <div class="item-info">
+      <div class="item-desc">${i.desc}</div>
+      <div class="item-meta">${fmtDate(i.data)} · ${i.sub}</div>
+    </div>
+    <div class="item-val ${cls}">${sinal} ${fmt(i.valor)}</div>
+    ${del}
+  </div>`;
+}
+
+function renderHistorico(){
+  const all = [
+    ...dados.saidas.map(s=>({tipo:s.pagto==='A Vencer'?'a':'s',desc:s.desc,sub:s.cat,data:s.data,valor:s.valor,id:s.id,origem:'saida'})),
+    ...dados.entradas.map(e=>({tipo:'e',desc:`PIX — ${NOMES[e.socio]||e.socio}`,sub:'Entrada',data:e.data,valor:e.valor,id:e.id,origem:'entrada'}))
+  ].sort((a,b)=>b.data.localeCompare(a.data));
+  document.getElementById('hist-list').innerHTML = all.length ? all.map(i=>itemHTML(i,true)).join('') : '<div class="empty">Nenhum lançamento.</div>';
+}
+
+function renderResumo(){
+  const {ent,saiPago,av,saldo} = calcTotais();
+  const hoje = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  let h = `<div class="res-box">
+    <strong>📅 ${hoje}</strong><br>
+    Total entradas: <strong>${fmt(ent)}</strong><br>
+    Saídas pagas: <strong>${fmt(saiPago)}</strong><br>
+    A vencer: <strong>${fmt(av)}</strong><br>
+    Saldo disponível: <strong>${fmt(saldo)}</strong>
+  </div>
+  <div class="sec-head">Contribuição por sócio</div>`;
+  SOCIOS.forEach(s => {
+    const tot = dados.entradas.filter(e=>e.socio===s.cod).reduce((a,e)=>a+Number(e.valor),0);
+    const qtd = dados.entradas.filter(e=>e.socio===s.cod).length;
+    h += `<div class="res-socio">
+      <div class="s-av ${s.cls}" style="width:38px;height:38px;font-size:12px">${s.ini}</div>
+      <div class="res-info"><div class="res-nome">${s.nome}</div><div class="res-detalhe">${qtd} aporte(s)</div></div>
+      <div class="res-val">${fmt(tot)}</div>
+    </div>`;
+  });
+  const avList = dados.saidas.filter(s=>s.pagto==='A Vencer').sort((a,b)=>a.data.localeCompare(b.data));
+  h += `<div class="divider"></div><div class="sec-head">Contas a vencer</div>`;
+  h += avList.length ? avList.map(s=>`<div class="item" style="margin-bottom:6px">
+    <div class="item-dot dot-a"></div>
+    <div class="item-info"><div class="item-desc">${s.desc}</div><div class="item-meta">Vence ${fmtDate(s.data)} · ${s.cat}</div></div>
+    <div class="item-val val-a">${fmt(s.valor)}</div>
+  </div>`).join('') : '<div class="empty">Nenhuma conta a vencer.</div>';
+  document.getElementById('resumo-content').innerHTML = h;
+}
+
+function setTipo(t){
+  tipoForm = t;
+  document.getElementById('opt-s').className = 'tipo-opt' + (t==='s' ? ' on-s' : '');
+  document.getElementById('opt-e').className = 'tipo-opt' + (t==='e' ? ' on-e' : '');
+  document.getElementById('grp-cat').style.display = t==='s' ? 'block' : 'none';
+  document.getElementById('grp-pagto').style.display = t==='s' ? 'block' : 'none';
+  document.getElementById('grp-socio').style.display = t==='e' ? 'block' : 'none';
+}
+
+async function salvar(){
+  const desc = document.getElementById('f-desc').value.trim();
+  const valor = parseFloat(document.getElementById('f-valor').value);
+  const data = document.getElementById('f-data').value;
+  if(!desc || !valor || valor<=0 || !data){ showToast('Preencha todos os campos!'); return; }
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true; btn.textContent = 'Salvando...';
+  try {
+    if(tipoForm==='s'){
+      const res = await fetch(`${API}/saida`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({desc,cat:document.getElementById('f-cat').value,pagto:document.getElementById('f-pagto').value,data,valor})});
+      const nova = await res.json();
+      dados.saidas.push(nova);
+    } else {
+      const socio = document.getElementById('f-socio').value;
+      const res = await fetch(`${API}/entrada`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({socio,data,valor})});
+      const nova = await res.json();
+      dados.entradas.push(nova);
+    }
+    document.getElementById('f-desc').value = '';
+    document.getElementById('f-valor').value = '';
+    showToast('✓ Lançamento salvo!');
+    goTo('s-home');
+  } catch(e){ showToast('Erro ao salvar. Tente novamente.'); }
+  btn.disabled = false; btn.textContent = 'Salvar lançamento';
+}
+
+async function deletar(origem, id){
+  if(!confirm('Apagar este lançamento?')) return;
+  await fetch(`${API}/${origem}/${id}`,{method:'DELETE'});
+  if(origem==='saida') dados.saidas = dados.saidas.filter(s=>s.id!==id);
+  else dados.entradas = dados.entradas.filter(e=>e.id!==id);
+  renderHistorico();
+  renderHome();
+  showToast('Lançamento removido.');
+}
+
+function exportCSV(){
+  let csv = '\uFEFFTipo,Data,Descrição,Categoria,Status,Sócio,Valor\n';
+  dados.saidas.forEach(s => csv+=`Saída,${fmtDate(s.data)},"${s.desc}",${s.cat},${s.pagto},,${Number(s.valor).toFixed(2)}\n`);
+  dados.entradas.forEach(e => csv+=`Entrada,${fmtDate(e.data)},,,, ${NOMES[e.socio]||e.socio},${Number(e.valor).toFixed(2)}\n`);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download = `CasaC18_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.csv`;
+  a.click();
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+init();
+</script>
+</body>
+</html>

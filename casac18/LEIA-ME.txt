@@ -1,0 +1,55 @@
+# Casa C18 — App Financeiro
+
+App para controle financeiro da obra, com dados compartilhados entre os 4 sócios.
+
+---
+
+## Como colocar no ar (5 minutos)
+
+### Passo 1 — Criar conta no GitHub (gratuito)
+1. Acesse https://github.com e clique em **Sign up**
+2. Crie uma conta com seu e-mail
+3. Confirme o e-mail
+
+### Passo 2 — Subir os arquivos no GitHub
+1. No GitHub, clique em **New repository**
+2. Nome: `casa-c18` → clique em **Create repository**
+3. Clique em **uploading an existing file**
+4. Arraste todos os arquivos desta pasta para lá
+5. Clique em **Commit changes**
+
+### Passo 3 — Criar conta no Vercel (gratuito)
+1. Acesse https://vercel.com e clique em **Sign up**
+2. Escolha **Continue with GitHub**
+3. Autorize o Vercel
+
+### Passo 4 — Conectar e publicar
+1. No Vercel, clique em **Add New Project**
+2. Selecione o repositório `casa-c18`
+3. Clique em **Deploy** (sem mudar nada)
+4. Aguarde ~1 minuto
+
+### Passo 5 — Ativar o banco de dados KV
+1. No projeto no Vercel, vá em **Storage** → **Create Database**
+2. Escolha **KV** → **Create**
+3. Clique em **Connect to Project** → selecione `casa-c18`
+4. Clique em **Redeploy** no projeto
+
+### Pronto! 🎉
+Seu link será algo como: **casa-c18.vercel.app**
+
+Compartilhe esse link no grupo do WhatsApp com os 4 sócios.
+Funciona no celular como um app — pode salvar na tela inicial!
+
+---
+
+## Como adicionar na tela inicial do celular
+
+**iPhone:** Abra o link no Safari → botão compartilhar → "Adicionar à Tela de Início"
+
+**Android:** Abra no Chrome → menu (3 pontinhos) → "Adicionar à tela inicial"
+
+---
+
+## Suporte
+Em caso de dúvida, abra o Claude.ai e pergunte!
