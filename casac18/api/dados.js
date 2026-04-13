@@ -1,5 +1,4 @@
-// api/dados.js — GET todos os dados
-import { kv } from '@vercel/kv';
+import { put, get, list } from '@vercel/blob';
 
 const DADOS_INICIAIS = {
   saidas: [
@@ -39,21 +38,27 @@ const DADOS_INICIAIS = {
   ]
 };
 
+async function lerDados() {
+  try {
+    const { blobs } = await list({ prefix: 'c18_dados' });
+    if (blobs.length === 0) return null;
+    const blob = blobs.sort((a,b) => new Date(b.uploadedAt) - new Date(a.uploadedAt))[0];
+    const res = await fetch(blob.url);
+    return await res.json();
+  } catch(e) { return null; }
+}
+
+async function salvarDados(dados) {
+  await put('c18_dados.json', JSON.stringify(dados), { access: 'public', addRandomSuffix: false });
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   if (req.method === 'OPTIONS') return res.status(200).end();
-  
-  let saidas = await kv.get('c18_saidas');
-  let entradas = await kv.get('c18_entradas');
-  
-  if (!saidas) {
-    saidas = DADOS_INICIAIS.saidas;
-    await kv.set('c18_saidas', saidas);
+  let dados = await lerDados();
+  if (!dados) {
+    dados = DADOS_INICIAIS;
+    await salvarDados(dados);
   }
-  if (!entradas) {
-    entradas = DADOS_INICIAIS.entradas;
-    await kv.set('c18_entradas', entradas);
-  }
-  
-  return res.status(200).json({ saidas, entradas });
+  return res.status(200).json(dados);
 }
